@@ -1,4 +1,4 @@
-"use clirnt";
+"use client";
 
 import { useEffect, useState } from "react";
 import { getSingleNote } from "@/lib/api";
