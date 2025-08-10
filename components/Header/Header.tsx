@@ -1,6 +1,6 @@
 import css from "./Header.module.css";
 import Link from "next/link";
-import SidebarNotes from "@/app/notes/[id]/filter/@sidebar/SidebarNotes";
+import SidebarNotes from "@/app/notes/filter/@sidebar/SidebarNotes";
 
 const Header = async () => {
   return (
