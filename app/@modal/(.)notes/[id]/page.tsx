@@ -1,3 +1,5 @@
+"use clirnt";
+
 import { useEffect, useState } from "react";
 import { getSingleNote } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
