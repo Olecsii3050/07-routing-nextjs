@@ -2,13 +2,22 @@
 
 import css from "./NoteDetails.module.css";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { fetchNoteById } from "@/lib/api";
 
 const NoteDetailsClient = () => {
   const { id } = useParams<{ id: string }>();
 
   const noteId = parseInt(id, 10);
+
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    const isSure = confirm("Are you sure?");
+    if (isSure) {
+      router.back();
+    }
+  };
 
   const {
     data: note,
@@ -26,6 +35,7 @@ const NoteDetailsClient = () => {
 
   return (
     <div className={css.container}>
+      <button onClick={handleGoBack}>Back</button>
       <div className={css.item}>
         <div className={css.header}>
           <h2>Note title: {note.title}</h2>
