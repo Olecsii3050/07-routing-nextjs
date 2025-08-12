@@ -7,11 +7,13 @@ import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: {
+    id: string;
+  };
 };
 
 const NoteDetails = async ({ params }: Props) => {
-  const { id } = await params;
+  const { id } = params;
   const queryClient = new QueryClient();
 
   const noteId = parseInt(id, 10);
@@ -23,7 +25,7 @@ const NoteDetails = async ({ params }: Props) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient />{" "}
+      <NoteDetailsClient />
     </HydrationBoundary>
   );
 };
