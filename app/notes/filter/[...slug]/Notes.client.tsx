@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
 import { useDebouncedCallback } from "use-debounce";
@@ -19,9 +19,10 @@ interface AppProps {
     data: Note[];
     total_pages: number;
   };
+  tag?: string;
 }
 
-export default function App({ initialNotes }: AppProps) {
+export default function App({ initialNotes, tag }: AppProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -43,15 +44,20 @@ export default function App({ initialNotes }: AppProps) {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["notes", page, debouncedSearch],
+    queryKey: ["notes", page, debouncedSearch, tag],
     queryFn: () =>
       fetchNotes({
         page,
         perPage: 12,
         search: debouncedSearch,
+        categoryId: tag,
       }),
     placeholderData: keepPreviousData,
   });
+
+  useEffect(() => {
+    setPage(1);
+  }, [tag]);
 
   return (
     <div className={css.app}>

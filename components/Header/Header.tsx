@@ -1,8 +1,16 @@
 import css from "./Header.module.css";
 import Link from "next/link";
-import SidebarNotes from "@/app/notes/filter/@sidebar/SidebarNotes";
+import TagsMenu from "@/components/TagsMenu/TagsMenu";
+
+interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 const Header = async () => {
+  const tags: Tag[] = [];
+
   return (
     <header className={css.header}>
       <Link href="/" aria-label="Home">
@@ -11,7 +19,7 @@ const Header = async () => {
       <nav aria-label="Main Navigation">
         <ul className={css.navigation}>
           <li>
-            <SidebarNotes />
+            <TagsMenu tags={tags} />
           </li>
           <li>
             <Link href="/">Home</Link>
@@ -19,7 +27,6 @@ const Header = async () => {
           <li>
             <Link href="/notes">Notes</Link>
           </li>
-
           <li>
             <Link href="/profile">Profile</Link>
           </li>
