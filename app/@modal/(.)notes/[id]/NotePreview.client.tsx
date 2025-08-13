@@ -22,6 +22,7 @@ export default function NotePreview() {
       return fetchNoteById(id);
     },
     enabled: !!id,
+    refetchOnMount: true,
   });
 
   const handleClose = () => {
@@ -36,6 +37,14 @@ export default function NotePreview() {
     <Modal onClose={handleClose}>
       <h2>{note.title}</h2>
       <p>{note.content}</p>
+      <p>
+        <strong>Tags:</strong> {note.tag}
+      </p>
+      <p>
+        <strong>Created At:</strong>{" "}
+        {new Date(note.createdAt).toLocaleDateString()}
+      </p>
+      <button onClick={handleClose}>Closed</button>
     </Modal>
   );
 }

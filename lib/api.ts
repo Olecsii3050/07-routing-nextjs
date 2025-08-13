@@ -17,8 +17,9 @@ const createApiClient = (): AxiosInstance => {
   });
 };
 
-export const getSingleNote = async (id: string) => {
-  const res = await axios.get<Note>(`/notes/${id}`);
+export const getSingleNote = async (id: string): Promise<Note> => {
+  const api = createApiClient();
+  const res = await api.get<Note>(`/notes/${id}`);
   return res.data;
 };
 
@@ -26,14 +27,14 @@ export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
-  categoryId?: string;
+  tag?: NoteTag;
 }
 
 export interface FetchNotesResponse {
   page: number;
   perPage: number;
   data: Note[];
-  total_pages: number;
+  totalPages: number;
 }
 
 interface RawFetchNotesResponse {
@@ -45,12 +46,12 @@ export const fetchNotes = async ({
   page = 1,
   perPage = 12,
   search = "",
-  categoryId,
+  tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
   const api = createApiClient();
   const params: Record<string, string | number> = { page, perPage };
   if (search) params.search = search;
-  if (categoryId) params.categoryId = categoryId;
+  if (tag) params.tag = tag;
 
   const response = await api.get<RawFetchNotesResponse>("/notes", { params });
   const raw = response.data;
@@ -59,7 +60,7 @@ export const fetchNotes = async ({
     page,
     perPage,
     data: raw.notes,
-    total_pages: raw.totalPages,
+    totalPages: raw.totalPages,
   };
 };
 

@@ -12,13 +12,11 @@ import NoteForm from "@/components/NoteForm/NoteForm";
 import Loader from "@/components/Loader/Loader";
 import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 import css from "./Notes.module.css";
-import { Note } from "@/types/note";
+import { Note, NoteTag } from "@/types/note";
+import { FetchNotesResponse } from "@/lib/api";
 
 interface AppProps {
-  initialNotes: {
-    data: Note[];
-    total_pages: number;
-  };
+  initialNotes: FetchNotesResponse;
   tag?: string;
 }
 
@@ -38,20 +36,16 @@ export default function App({ initialNotes, tag }: AppProps) {
     handleSearch(search);
   };
 
-  const {
-    data = initialNotes,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["notes", page, debouncedSearch, tag],
     queryFn: () =>
       fetchNotes({
         page,
         perPage: 12,
         search: debouncedSearch,
-        categoryId: tag,
+        tag,
       }),
+    initialData: initialNotes,
     placeholderData: keepPreviousData,
   });
 
@@ -63,10 +57,10 @@ export default function App({ initialNotes, tag }: AppProps) {
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={search} onChange={handleSearchChange} />
-        {data && data.total_pages > 1 && (
+        {data && data.totalPages > 1 && (
           <Pagination
             currentPage={page}
-            totalPages={data.total_pages}
+            totalPages={data.totalPages}
             onPageChange={setPage}
           />
         )}

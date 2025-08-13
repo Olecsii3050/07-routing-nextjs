@@ -8,8 +8,16 @@ interface Tag {
   slug: string;
 }
 
+const fetchTags = async (): Promise<Tag[]> => {
+  return [
+    { id: "1", name: "Work", slug: "work" },
+    { id: "2", name: "Personal", slug: "personal" },
+    { id: "3", name: "Important", slug: "important" },
+  ];
+};
+
 const Header = async () => {
-  const tags: Tag[] = [];
+  const tags: Tag[] = await fetchTags();
 
   return (
     <header className={css.header}>
@@ -19,13 +27,10 @@ const Header = async () => {
       <nav aria-label="Main Navigation">
         <ul className={css.navigation}>
           <li>
-            <TagsMenu tags={tags} />
+            <TagsMenu tags={tags} /> {}
           </li>
           <li>
             <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/notes">Notes</Link>
           </li>
           <li>
             <Link href="/profile">Profile</Link>

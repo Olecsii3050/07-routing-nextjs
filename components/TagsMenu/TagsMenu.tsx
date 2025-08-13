@@ -40,7 +40,7 @@ export default function TagsMenu({ tags, onTagSelect }: TagsMenuProps) {
         <ul className={css.menuList}>
           <li className={css.menuItem}>
             <Link
-              href="/notes"
+              href="/notes/filter/All"
               className={css.menuLink}
               onClick={() => handleSelect(null)}
             >
@@ -49,13 +49,13 @@ export default function TagsMenu({ tags, onTagSelect }: TagsMenuProps) {
           </li>
           {tags.map((tag) => (
             <li key={tag.id} className={css.menuItem}>
-              <a
-                href={`/notes/tag/${tag.slug}`}
+              <Link
+                href={`/notes/filter/${tag.name}`}
                 className={css.menuLink}
                 onClick={() => handleSelect(tag.slug)}
               >
                 {tag.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
