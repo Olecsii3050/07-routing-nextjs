@@ -5,6 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
 
+interface Note {
+  title: string;
+  content: string;
+  tag: string;
+  createdAt: string;
+}
+
 export default function NotePreview() {
   const router = useRouter();
   const params = useParams();
@@ -15,14 +22,14 @@ export default function NotePreview() {
     data: note,
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<Note>({
     queryKey: ["note", id],
     queryFn: () => {
       if (!id) throw new Error("Note id is undefined");
       return fetchNoteById(id);
     },
     enabled: !!id,
-    refetchOnMount: true,
+    refetchOnMount: false,
   });
 
   const handleClose = () => {
@@ -44,7 +51,7 @@ export default function NotePreview() {
         <strong>Created At:</strong>{" "}
         {new Date(note.createdAt).toLocaleDateString()}
       </p>
-      <button onClick={handleClose}>Closed</button>
+      <button onClick={handleClose}>Close</button>
     </Modal>
   );
 }

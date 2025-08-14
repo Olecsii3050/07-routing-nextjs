@@ -17,7 +17,7 @@ import { FetchNotesResponse } from "@/lib/api";
 
 interface AppProps {
   initialNotes: FetchNotesResponse;
-  tag?: string;
+  tag?: NoteTag;
 }
 
 export default function App({ initialNotes, tag }: AppProps) {
@@ -43,7 +43,7 @@ export default function App({ initialNotes, tag }: AppProps) {
         page,
         perPage: 12,
         search: debouncedSearch,
-        tag,
+        tag: tag as NoteTag | undefined,
       }),
     initialData: initialNotes,
     placeholderData: keepPreviousData,

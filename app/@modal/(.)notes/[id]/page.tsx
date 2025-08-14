@@ -1,44 +1,66 @@
+"use client";
+
+import { useRouter, useParams } from "next/navigation";
+import {
+  useQuery,
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import Modal from "@/components/Modal/Modal";
-import { getSingleNote } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
-import { HydrationBoundary } from "@tanstack/react-query";
+import { fetchNoteById } from "@/lib/api";
 
-type Props = {
-  params: { id: string };
-};
+interface Note {
+  title: string;
+  content: string;
+  tag: string;
+  createdAt: string;
+}
 
-const NotePreview = ({ params }: Props) => {
-  const { id } = params;
+export default function NotePreview() {
+  const router = useRouter();
+  const params = useParams();
+  const idParam = params?.id;
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
   const {
     data: note,
     isLoading,
     isError,
-  } = useQuery({
+  } = useQuery<Note>({
     queryKey: ["note", id],
-    queryFn: () => getSingleNote(id),
+    queryFn: () => {
+      if (!id) throw new Error("Note id is undefined");
+      return fetchNoteById(id);
+    },
     enabled: !!id,
+    refetchOnMount: false,
   });
 
+  const handleClose = () => {
+    router.back();
+  };
+
+  if (!id) return <div>Invalid Note ID</div>;
   if (isLoading) return <div>Loading...</div>;
-  if (isError || !note) return <div>Note not found</div>;
+  if (isError || !note) return <div>Error loading note</div>;
+
+  const queryClient = new QueryClient();
 
   return (
-    <HydrationBoundary>
-      <Modal onClose={() => {}}>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Modal onClose={handleClose}>
         <h2>{note.title}</h2>
         <p>{note.content}</p>
+        <p>
+          <strong>Tags:</strong> {note.tag}
+        </p>
+        <p>
+          <strong>Created At:</strong>{" "}
+          {new Date(note.createdAt).toLocaleDateString()}
+        </p>
+        <button onClick={handleClose}>Close</button>
       </Modal>
     </HydrationBoundary>
   );
-};
-
-export async function getServerSideProps({
-  params,
-}: {
-  params: { id: string };
-}) {
-  return { props: { params } };
 }
-
-export default NotePreview;
