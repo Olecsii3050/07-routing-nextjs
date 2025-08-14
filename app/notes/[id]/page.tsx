@@ -6,10 +6,12 @@ import {
 import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 
+type Params = {
+  id: string;
+};
+
 type Props = {
-  params: {
-    id: string;
-  };
+  params: Params;
 };
 
 const NoteDetails = async ({ params }: Props) => {
