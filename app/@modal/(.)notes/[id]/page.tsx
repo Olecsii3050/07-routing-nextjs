@@ -1,14 +1,6 @@
-"use client";
-
-import { useRouter, useParams } from "next/navigation";
-import {
-  useQuery,
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
+import Modal from "@/components/Modal/Modal";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 interface Note {
   title: string;
@@ -17,50 +9,56 @@ interface Note {
   createdAt: string;
 }
 
-export default function NotePreview() {
-  const router = useRouter();
-  const params = useParams();
-  const idParam = params?.id;
-  const id = Array.isArray(idParam) ? idParam[0] : idParam;
+type Props = {
+  params: { id: string };
+};
 
+function NotePreviewClient({ id }: { id: string }) {
   const {
     data: note,
     isLoading,
     isError,
   } = useQuery<Note>({
     queryKey: ["note", id],
-    queryFn: () => {
-      if (!id) throw new Error("Note id is undefined");
-      return fetchNoteById(id);
-    },
+    queryFn: () => fetchNoteById(id),
     enabled: !!id,
-    refetchOnMount: false,
   });
 
   const handleClose = () => {
-    router.back();
+    window.history.back();
   };
 
-  if (!id) return <div>Invalid Note ID</div>;
   if (isLoading) return <div>Loading...</div>;
   if (isError || !note) return <div>Error loading note</div>;
 
-  const queryClient = new QueryClient();
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Modal onClose={handleClose}>
-        <h2>{note.title}</h2>
-        <p>{note.content}</p>
-        <p>
-          <strong>Tags:</strong> {note.tag}
-        </p>
-        <p>
-          <strong>Created At:</strong>{" "}
-          {new Date(note.createdAt).toLocaleDateString()}
-        </p>
-        <button onClick={handleClose}>Close</button>
-      </Modal>
-    </HydrationBoundary>
+    <Modal onClose={handleClose}>
+      <h2>{note.title}</h2>
+      <p>{note.content}</p>
+      <p>
+        <strong>Tags:</strong> {note.tag}
+      </p>
+      <p>
+        <strong>Created At:</strong>{" "}
+        {new Date(note.createdAt).toLocaleDateString()}
+      </p>
+      <button onClick={handleClose}>Close</button>
+    </Modal>
   );
+}
+
+export default async function NotePreview({ params }: Props) {
+  const queryClient = new QueryClient();
+  const id = params.id;
+
+  if (!id) {
+    return <div>Invalid Note ID</div>;
+  }
+
+  await queryClient.prefetchQuery<Note>({
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
+  });
+
+  return <NotePreviewClient id={id} />;
 }

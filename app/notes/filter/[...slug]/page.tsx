@@ -1,6 +1,5 @@
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
-import NoteList from "@/components/NoteList/NoteList";
 import { NoteTag } from "@/types/note";
 
 type Props = {
@@ -41,8 +40,6 @@ export default async function NotesPage({ params }: Props) {
         }}
         tag={tag}
       />
-      <h1>Notes List</h1>
-      {response?.data?.length > 0 && <NoteList notes={response.data} />}
     </div>
   );
 }
