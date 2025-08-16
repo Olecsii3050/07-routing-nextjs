@@ -1,6 +1,11 @@
 import { fetchNoteById } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useQuery,
+  HydrationBoundary,
+  dehydrate,
+} from "@tanstack/react-query";
 
 interface Note {
   title: string;
@@ -10,7 +15,7 @@ interface Note {
 }
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 function NotePreviewClient({ id }: { id: string }) {
@@ -49,7 +54,7 @@ function NotePreviewClient({ id }: { id: string }) {
 
 export default async function NotePreview({ params }: Props) {
   const queryClient = new QueryClient();
-  const id = params.id;
+  const { id } = await params;
 
   if (!id) {
     return <div>Invalid Note ID</div>;
@@ -60,5 +65,11 @@ export default async function NotePreview({ params }: Props) {
     queryFn: () => fetchNoteById(id),
   });
 
-  return <NotePreviewClient id={id} />;
+  const dehydratedState = dehydrate(queryClient);
+
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <NotePreviewClient id={id} />
+    </HydrationBoundary>
+  );
 }
