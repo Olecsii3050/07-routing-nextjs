@@ -14,8 +14,12 @@ interface Note {
   createdAt: string;
 }
 
+type Params = {
+  id: string;
+};
+
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Params;
 };
 
 function NotePreviewClient({ id }: { id: string }) {
@@ -54,7 +58,7 @@ function NotePreviewClient({ id }: { id: string }) {
 
 export default async function NotePreview({ params }: Props) {
   const queryClient = new QueryClient();
-  const { id } = await params;
+  const { id } = params;
 
   if (!id) {
     return <div>Invalid Note ID</div>;
