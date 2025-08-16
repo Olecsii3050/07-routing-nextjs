@@ -19,7 +19,7 @@ type Params = {
 };
 
 type Props = {
-  params: Params;
+  params: Promise<Params>;
 };
 
 function NotePreviewClient({ id }: { id: string }) {
@@ -58,7 +58,7 @@ function NotePreviewClient({ id }: { id: string }) {
 
 export default async function NotePreview({ params }: Props) {
   const queryClient = new QueryClient();
-  const { id } = params;
+  const { id } = await params;
 
   if (!id) {
     return <div>Invalid Note ID</div>;
